@@ -14,7 +14,6 @@ func main(){
 		panic(err)
 	}
 
-
 	r := gin.New()
 
 	r.Use(gin.Logger())
@@ -24,6 +23,8 @@ func main(){
 	}
 
 	r.POST("/v1/auth/register", authController.Register)
+	r.POST("/v1/auth/login", authController.Login)
+
 
 	r.Run(":4444")
 }
