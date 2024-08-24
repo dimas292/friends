@@ -7,10 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main(){
+func main() {
 
 	db, err := config.ConnectDb()
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 
@@ -22,9 +22,14 @@ func main(){
 		DB: db,
 	}
 
-	r.POST("/v1/auth/register", authController.Register)
-	r.POST("/v1/auth/login", authController.Login)
+	v1 := r.Group("/v1")
 
+	auth := v1.Group("auth")
+
+	{
+		auth.POST("register", authController.Register)
+		auth.POST("login", authController.Login)
+	}
 
 	r.Run(":4444")
 }
