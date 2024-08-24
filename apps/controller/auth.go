@@ -178,7 +178,6 @@ func (a *AuthContorller) Login(ctx *gin.Context) {
 }
 
 func (a *AuthContorller) Profile(ctx *gin.Context) {
-
 	ctx.JSON(http.StatusOK, gin.H{
 		"id" : ctx.GetInt("authId"),
 	})
