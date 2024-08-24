@@ -2,6 +2,7 @@ package controller
 
 import (
 	"database/sql"
+	"firens/apps/pkg/tokens"
 	"firens/apps/response"
 	"net/http"
 
@@ -99,7 +100,7 @@ func (a *AuthContorller) Register(ctx *gin.Context) {
 	ctx.JSON(resp.StatusCode, resp)
 }
 
-func (a *AuthContorller)Login(ctx *gin.Context) {
+func (a *AuthContorller) Login(ctx *gin.Context) {
 
 	var req LoginRequest
 	// binding
@@ -139,7 +140,7 @@ func (a *AuthContorller)Login(ctx *gin.Context) {
 		})
 		return
 	}
-	// hash dan compare untuk menocokan pasword 
+	// hash dan compare untuk menocokan pasword
 	err = bcrypt.CompareHashAndPassword([]byte(auth.Password), []byte(req.Password))
 
 	if err != nil {
@@ -149,14 +150,36 @@ func (a *AuthContorller)Login(ctx *gin.Context) {
 		})
 		return
 	}
-	// response 
+	// jwt
+	tok := tokens.PayLoadToken{
+		AuthId: auth.Id,
+	}
+
+	token, err := tokens.GenerateToken(&tok)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"err":     err.Error(),
+		})
+		return
+	}
+
+	// response
 	resp := response.ResponseAPI{
 		StatusCode: http.StatusOK,
-		Message: "LOGIN SUCCESS",
+		Message:    "LOGIN SUCCESS",
 		Payload: gin.H{
-			"token" : "barrer token",
+			"token": token,
 		},
 	}
 
 	ctx.JSON(resp.StatusCode, resp)
+}
+
+func (a *AuthContorller) Profile(ctx *gin.Context) {
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"id" : ctx.GetInt("authId"),
+	})
 }

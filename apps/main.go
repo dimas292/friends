@@ -29,6 +29,7 @@ func main() {
 	{
 		auth.POST("register", authController.Register)
 		auth.POST("login", authController.Login)
+		auth.GET("profile", authController.Profile)
 	}
 
 	r.Run(":4444")
